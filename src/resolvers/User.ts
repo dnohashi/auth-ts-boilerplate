@@ -20,6 +20,9 @@ import {
 } from '../inputs/UserInput';
 import { FormError } from '../types/FormError';
 
+// Object type for UserResponse
+// Defines fields that can be queried
+// Annotation is required to determine return types for resolvers
 @ObjectType()
 export class UserResponse {
   @Field(() => [FormError], { nullable: true })
@@ -31,6 +34,9 @@ export class UserResponse {
   @Field(() => String, { nullable: true })
   message?: string;
 }
+
+// Controller
+// Resolves for type 'User' - the User entity is wrapped by @ObjectType
 @Resolver(User)
 export class UserResolver {
   @Query(() => UserResponse, { nullable: true })

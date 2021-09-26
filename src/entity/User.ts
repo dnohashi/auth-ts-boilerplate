@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ResetPasswordRequest } from './ResetPasswordRequest';
+import { Todo } from './Todo';
 
 export enum UserType {
   ADMIN_USER = 'ADMIN',
@@ -23,7 +24,7 @@ registerEnumType(UserType, {
 });
 
 @Entity({ name: 'Users' })
-@ObjectType()
+@ObjectType() // Converts entity to a Type in GraphQL (used for type safety)
 @Index(['email'], { unique: true })
 @Index(['username'], { unique: true })
 export class User extends BaseEntity {
@@ -31,7 +32,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Field(() => String)
+  @Field(() => String) // @Field decorator determines what fields can be queried
   @Column({
     type: 'varchar',
   })
@@ -97,6 +98,9 @@ export class User extends BaseEntity {
     nullable: true,
   })
   tokens?: ResetPasswordRequest[];
+
+  @OneToMany(() => Todo, (todo) => todo.user)
+  todos!: Todo[];
 
   @Field(() => Date)
   @CreateDateColumn({
