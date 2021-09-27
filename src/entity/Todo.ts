@@ -41,8 +41,9 @@ export class Todo extends BaseEntity {
     type: 'varchar',
     nullable: true,
   })
-  description!: string;
+  description?: string;
 
+  @Field(() => Date)
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     nullable: true,
@@ -64,7 +65,7 @@ export class Todo extends BaseEntity {
     nullable: true,
     default: null,
   })
-  deletedAt!: Date;
+  deletedAt?: Date;
 
   @Field(() => Date, {
     nullable: true,
@@ -74,5 +75,5 @@ export class Todo extends BaseEntity {
     nullable: true,
     default: null,
   })
-  completedAt!: Date;
+  completedAt?: Date;
 }

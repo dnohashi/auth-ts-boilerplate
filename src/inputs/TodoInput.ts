@@ -1,25 +1,13 @@
-import { Field, ID, InputType } from 'type-graphql';
-import { Todo } from '../entity/Todo';
+import { Field, InputType } from 'type-graphql';
 
 @InputType()
-export class CreateTodoInput {
-  @Field(() => [Todo])
-  todos!: Todo[];
-}
-
-@InputType()
-class UpdateData {
+export class TodoData {
   @Field(() => String)
   title?: string;
+
+  @Field(() => String, { nullable: true })
   description?: string;
+
+  @Field(() => Date, { nullable: true })
   completedAt?: Date;
-}
-
-@InputType()
-export class UpdateTodoInput {
-  @Field(() => ID)
-  id!: string;
-
-  @Field(() => Todo)
-  data!: UpdateData;
 }

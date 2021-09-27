@@ -8,11 +8,10 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getManager } from 'typeorm';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 import { Todo } from '../entity/Todo';
 import { ContextType } from '../types';
-import { CreateTodoInput, UpdateTodoInput } from '../inputs/TodoInput';
+import { TodoData } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
 
 @ObjectType()
@@ -58,25 +57,19 @@ export class TodoResolver {
   @Mutation(() => TodoResponse)
   @Authorized()
   async createTodo(
-    @Arg('params') { todos }: CreateTodoInput,
+    @Arg('data') data: TodoData,
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const createdTodos: Todo[] = [];
-
-      await getManager().transaction(async (transaction) => {
-        todos.forEach((todo): void => {
-          createdTodos.push(
-            transaction.create(Todo, {
-              ...todo,
-              userId: req.session.userId,
-            }),
-          );
-        });
+      const todo: Todo = Todo.create({
+        ...data,
+        userId: req.session.userId,
       });
 
+      await todo.save();
+
       return {
-        todos: createdTodos,
+        todo,
       };
     } catch (error) {
       return {
@@ -131,7 +124,8 @@ export class TodoResolver {
   @Mutation(() => TodoResponse)
   @Authorized()
   async updateTodo(
-    @Arg('params') { id, data }: UpdateTodoInput,
+    @Arg('id') id: string,
+    @Arg('data') data: TodoData,
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {

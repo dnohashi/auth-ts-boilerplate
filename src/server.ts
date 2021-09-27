@@ -55,6 +55,7 @@ import { ResetPasswordRequest } from './entity/ResetPasswordRequest';
 /**
  * Import resolvers
  */
+import { TodoResolver } from './resolvers/Todo';
 import { UserResolver } from './resolvers/User';
 import { ResetPasswordRequestResolver } from './resolvers/ResetPassword';
 /**
@@ -67,7 +68,7 @@ import { LowerCaseDirective } from './directives';
 async function connect(): Promise<Connection> {
   return await createConnection({
     database: process.env.TYPEORM_DATABASE,
-    entities: [Todo, User, ResetPasswordRequest], // Add additional entities here
+    entities: [Todo, User, ResetPasswordRequest],
     host: process.env.TYPEORM_HOST,
     password: process.env.TYPEORM_PASSWORD,
     port: Number(process.env.TYPEORM_PORT),
@@ -167,7 +168,7 @@ async function main(): Promise<void> {
    * Generate a schema for Apollo
    */
   const schema = await buildSchema({
-    resolvers: [UserResolver, ResetPasswordRequestResolver], // Add resolvers here
+    resolvers: [TodoResolver, UserResolver, ResetPasswordRequestResolver],
     validate: process.env.NODE_ENV === 'production' ? true : false,
     authChecker: AuthenticationChecker,
     directives: [
