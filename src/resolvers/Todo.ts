@@ -36,7 +36,9 @@ export class TodoResolver {
   @Authorized()
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
-      const todos = await Todo.find({ where: { userId: req.session.userId } });
+      const todos: Todo[] = await Todo.find({
+        where: { userId: req.session.userId, deletedAt: null },
+      });
 
       return {
         todos,
@@ -95,7 +97,7 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo = await Todo.findOne({ where: { id } });
+      const todo: Todo | undefined = await Todo.findOne({ where: { id } });
 
       if (!todo) {
         throw new UserInputError('Todo could not be found', {
@@ -133,7 +135,7 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo = await Todo.findOne({ where: { id } });
+      const todo: Todo | undefined = await Todo.findOne({ where: { id } });
 
       if (!todo) {
         throw new UserInputError('Todo could not be found', {
