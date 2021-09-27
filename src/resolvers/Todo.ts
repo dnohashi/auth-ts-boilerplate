@@ -36,19 +36,6 @@ export class TodoResolver {
   @Authorized()
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
-      const userId = req.session.userId;
-
-      if (!userId && !req.user) {
-        return {
-          errors: [
-            {
-              field: 'user',
-              message: 'No active user session',
-            },
-          ],
-        };
-      }
-
       const todos = await Todo.find({ where: { userId: req.session.userId } });
 
       return {
@@ -76,8 +63,7 @@ export class TodoResolver {
       const createdTodos: Todo[] = [];
 
       await getManager().transaction(async (transaction) => {
-        todos.forEach((todo) => {
-          // Add interface for todo
+        todos.forEach((todo): void => {
           createdTodos.push(
             transaction.create(Todo, {
               ...todo,
