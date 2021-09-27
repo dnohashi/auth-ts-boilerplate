@@ -33,7 +33,7 @@ export class TodoResponse {
 export class TodoResolver {
   @Query(() => TodoResponse)
   @Authorized()
-  async readTodos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
+  async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
       const todos: Todo[] = await Todo.find({
         where: {
