@@ -9,11 +9,10 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getManager } from 'typeorm';
-import { UserInputError } from 'apollo-server';
+import { ForbiddenError, UserInputError } from 'apollo-server';
 import { Todo } from '../entity/Todo';
-import { User } from '../entity/User';
 import { ContextType } from '../types';
-// Define Todo Inputs (Interfaces)
+import { CreateTodoInput, UpdateTodoInput } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
 
 @ObjectType()
@@ -24,6 +23,9 @@ export class TodoResponse {
   @Field(() => [Todo], { nullable: true })
   todos?: Todo[];
 
+  @Field(() => Todo, { nullable: true })
+  todo?: Todo;
+
   @Field(() => String, { nullable: true })
   message?: string;
 }
@@ -31,6 +33,7 @@ export class TodoResponse {
 @Resolver(Todo)
 export class TodoResolver {
   @Query(() => TodoResponse, { nullable: true })
+  @Authorized()
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
       const userId = req.session.userId;
@@ -40,16 +43,126 @@ export class TodoResolver {
           errors: [
             {
               field: 'user',
-              message: 'User already logged out.',
+              message: 'No active user session',
             },
           ],
         };
       }
 
-      const todos = await Todo.find({ where: { userId } });
+      const todos = await Todo.find({ where: { userId: req.session.userId } });
 
       return {
         todos,
+      };
+    } catch (error) {
+      return {
+        errors: [
+          {
+            field: 'exception',
+            message: error.message,
+          },
+        ],
+      };
+    }
+  }
+
+  @Mutation(() => TodoResponse)
+  @Authorized()
+  async createTodo(
+    @Arg('params') { todos }: CreateTodoInput,
+    @Ctx() { req }: ContextType,
+  ): Promise<TodoResponse> {
+    try {
+      const createdTodos: Todo[] = [];
+
+      await getManager().transaction(async (transaction) => {
+        todos.forEach((todo) => {
+          // Add interface for todo
+          createdTodos.push(
+            transaction.create(Todo, {
+              ...todo,
+              userId: req.session.userId,
+            }),
+          );
+        });
+      });
+
+      return {
+        todos: createdTodos,
+      };
+    } catch (error) {
+      return {
+        errors: [
+          {
+            field: 'exception',
+            message: error.message,
+          },
+        ],
+      };
+    }
+  }
+
+  @Mutation(() => TodoResponse)
+  @Authorized()
+  async deleteTodo(
+    id: string,
+    @Ctx() { req }: ContextType,
+  ): Promise<TodoResponse> {
+    try {
+      const todo = await Todo.findOne({ where: { id } });
+
+      if (!todo) {
+        throw new UserInputError('Todo could not be found', {
+          field: 'todo',
+        });
+      }
+
+      if (todo.user.id !== req.session.userId) {
+        throw new ForbiddenError('Forbidden');
+      }
+
+      Object.assign(todo, { deletedAt: new Date() });
+
+      await todo.save();
+
+      return {
+        todo,
+      };
+    } catch (error) {
+      return {
+        errors: [
+          {
+            field: 'exception',
+            message: error.message,
+          },
+        ],
+      };
+    }
+  }
+
+  @Mutation(() => TodoResponse)
+  @Authorized()
+  async updateTodo(
+    @Arg('params') { id, data }: UpdateTodoInput,
+    @Ctx() { req }: ContextType,
+  ): Promise<TodoResponse> {
+    try {
+      const todo = await Todo.findOne({ where: { id } });
+
+      if (!todo) {
+        throw new UserInputError('Todo could not be found', {
+          field: 'todo',
+        });
+      }
+
+      if (todo.user.id !== req.session.userId) {
+        throw new ForbiddenError('Forbidden');
+      }
+
+      Object.assign(todo, data);
+
+      return {
+        todo,
       };
     } catch (error) {
       return {

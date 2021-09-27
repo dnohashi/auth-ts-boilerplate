@@ -19,6 +19,12 @@ export class Todo extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Field(() => ID)
+  @Column({
+    nullable: false,
+  })
+  userId!: string;
+
   @Index()
   @ManyToOne(() => User, (user) => user.todos)
   user!: User;
