@@ -5,9 +5,6 @@ export class TodoProps {
   @Field(() => String)
   title?: string;
 
-  @Field(() => String, { nullable: true })
-  note?: string;
-
   @Field(() => Date, { nullable: true })
   completedAt?: Date;
 

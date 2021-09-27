@@ -36,12 +36,6 @@ export class Todo extends BaseEntity {
   })
   title!: string;
 
-  @Field(() => String)
-  @Column({
-    type: 'varchar',
-  })
-  note!: string;
-
   @Field(() => Date)
   @UpdateDateColumn({
     type: 'timestamp with time zone',
