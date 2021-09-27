@@ -129,6 +129,46 @@ export class TodoResolver {
 
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  async completeTodo(
+    @Arg('id') id: string,
+    @Ctx() { req }: ContextType,
+  ): Promise<TodoResponse> {
+    try {
+      const todo: Todo | undefined = await Todo.findOne({
+        where: { id: req.session.userId },
+      });
+
+      if (!todo) {
+        throw new UserInputError('Todo could not be found', {
+          field: 'todo',
+        });
+      }
+
+      if (todo.userId !== req.session.userId) {
+        throw new ForbiddenError('Forbidden');
+      }
+
+      Object.assign(todo, { completedAt: new Date() });
+
+      await todo.save();
+
+      return {
+        todo,
+      };
+    } catch (error) {
+      return {
+        errors: [
+          {
+            field: 'exception',
+            message: error.message,
+          },
+        ],
+      };
+    }
+  }
+
+  @Mutation(() => TodoResponse)
+  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async updateTodo(
     @Arg('id') id: string,
     @Arg('data') data: TodoProps,
