@@ -10,6 +10,7 @@ import {
 } from 'type-graphql';
 import { ForbiddenError, UserInputError } from 'apollo-server';
 import { Todo } from '../entity/Todo';
+import { UserType } from '../entity/User';
 import { ContextType } from '../types';
 import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
@@ -32,7 +33,7 @@ export class TodoResponse {
 @Resolver(Todo)
 export class TodoResolver {
   @Query(() => TodoResponse)
-  @Authorized()
+  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
       const todos: Todo[] = await Todo.find({
@@ -58,7 +59,7 @@ export class TodoResolver {
   }
 
   @Mutation(() => TodoResponse)
-  @Authorized()
+  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async createTodo(
     @Arg('data') data: TodoProps,
     @Ctx() { req }: ContextType,
@@ -86,8 +87,8 @@ export class TodoResolver {
     }
   }
 
-  @Authorized()
   @Mutation(() => TodoResponse)
+  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async deleteTodo(
     @Arg('id') id: string,
     @Ctx() { req }: ContextType,
@@ -127,7 +128,7 @@ export class TodoResolver {
   }
 
   @Mutation(() => TodoResponse)
-  @Authorized()
+  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async updateTodo(
     @Arg('id') id: string,
     @Arg('data') data: TodoProps,
