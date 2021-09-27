@@ -24,7 +24,7 @@ registerEnumType(UserType, {
 });
 
 @Entity({ name: 'Users' })
-@ObjectType() // Converts entity to a Type in GraphQL (used for type safety)
+@ObjectType()
 @Index(['email'], { unique: true })
 @Index(['username'], { unique: true })
 export class User extends BaseEntity {
@@ -32,7 +32,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Field(() => String) // @Field decorator determines what fields can be queried
+  @Field(() => String)
   @Column({
     type: 'varchar',
   })

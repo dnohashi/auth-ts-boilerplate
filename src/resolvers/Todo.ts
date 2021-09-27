@@ -11,7 +11,7 @@ import {
 import { ForbiddenError, UserInputError } from 'apollo-server';
 import { Todo } from '../entity/Todo';
 import { ContextType } from '../types';
-import { TodoData } from '../inputs/TodoInput';
+import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
 
 @ObjectType()
@@ -31,12 +31,15 @@ export class TodoResponse {
 
 @Resolver(Todo)
 export class TodoResolver {
-  @Query(() => TodoResponse, { nullable: true })
+  @Query(() => TodoResponse)
   @Authorized()
-  async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
+  async readTodos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
       const todos: Todo[] = await Todo.find({
-        where: { userId: req.session.userId, deletedAt: null },
+        where: {
+          userId: req.session.userId,
+          deletedAt: null,
+        },
       });
 
       return {
@@ -57,11 +60,11 @@ export class TodoResolver {
   @Mutation(() => TodoResponse)
   @Authorized()
   async createTodo(
-    @Arg('data') data: TodoData,
+    @Arg('data') data: TodoProps,
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo = Todo.create({
+      const todo: Todo = await Todo.create({
         ...data,
         userId: req.session.userId,
       });
@@ -83,14 +86,16 @@ export class TodoResolver {
     }
   }
 
-  @Mutation(() => TodoResponse)
   @Authorized()
+  @Mutation(() => TodoResponse)
   async deleteTodo(
-    id: string,
+    @Arg('id') id: string,
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo | undefined = await Todo.findOne({ where: { id } });
+      const todo: Todo | undefined = await Todo.findOne({
+        where: { id: req.session.userId },
+      });
 
       if (!todo) {
         throw new UserInputError('Todo could not be found', {
@@ -125,7 +130,7 @@ export class TodoResolver {
   @Authorized()
   async updateTodo(
     @Arg('id') id: string,
-    @Arg('data') data: TodoData,
+    @Arg('data') data: TodoProps,
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
@@ -142,6 +147,8 @@ export class TodoResolver {
       }
 
       Object.assign(todo, data);
+
+      await todo.save();
 
       return {
         todo,

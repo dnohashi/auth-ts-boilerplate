@@ -39,9 +39,8 @@ export class Todo extends BaseEntity {
   @Field(() => String)
   @Column({
     type: 'varchar',
-    nullable: true,
   })
-  description?: string;
+  note!: string;
 
   @Field(() => Date)
   @UpdateDateColumn({
