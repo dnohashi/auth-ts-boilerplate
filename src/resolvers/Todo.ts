@@ -105,7 +105,7 @@ export class TodoResolver {
         });
       }
 
-      if (todo.user.id !== req.session.userId) {
+      if (todo.userId !== req.session.userId) {
         throw new ForbiddenError('Forbidden');
       }
 
@@ -143,7 +143,7 @@ export class TodoResolver {
         });
       }
 
-      if (todo.user.id !== req.session.userId) {
+      if (todo.userId !== req.session.userId) {
         throw new ForbiddenError('Forbidden');
       }
 
