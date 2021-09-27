@@ -95,7 +95,7 @@ export class TodoResolver {
   ): Promise<TodoResponse> {
     try {
       const todo: Todo | undefined = await Todo.findOne({
-        where: { id: req.session.userId },
+        where: { id },
       });
 
       if (!todo) {
@@ -135,7 +135,7 @@ export class TodoResolver {
   ): Promise<TodoResponse> {
     try {
       const todo: Todo | undefined = await Todo.findOne({
-        where: { id: req.session.userId },
+        where: { id },
       });
 
       if (!todo) {
