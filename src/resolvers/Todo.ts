@@ -8,12 +8,12 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { ForbiddenError, UserInputError } from 'apollo-server';
 import { Todo } from '../entity/Todo';
 import { UserType } from '../entity/User';
 import { ContextType } from '../types';
 import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
+import { findTodoByIdForUserSession } from './utils/findTodoByIdForUserSession';
 
 @ObjectType()
 export class TodoResponse {
@@ -100,19 +100,10 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo | undefined = await Todo.findOne({
-        where: { id },
+      const todo: Todo = await findTodoByIdForUserSession({
+        id,
+        userId: req.session.userId,
       });
-
-      if (!todo) {
-        throw new UserInputError('Todo could not be found', {
-          field: 'todo',
-        });
-      }
-
-      if (todo.userId !== req.session.userId) {
-        throw new ForbiddenError('Forbidden');
-      }
 
       Object.assign(todo, { deletedAt: new Date() });
 
@@ -141,19 +132,10 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo | undefined = await Todo.findOne({
-        where: { id },
+      const todo: Todo = await findTodoByIdForUserSession({
+        id,
+        userId: req.session.userId,
       });
-
-      if (!todo) {
-        throw new UserInputError('Todo could not be found', {
-          field: 'todo',
-        });
-      }
-
-      if (todo.userId !== req.session.userId) {
-        throw new ForbiddenError('Forbidden');
-      }
 
       Object.assign(todo, { completedAt: new Date() });
 
@@ -182,19 +164,10 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo | undefined = await Todo.findOne({
-        where: { id },
+      const todo: Todo = await findTodoByIdForUserSession({
+        id,
+        userId: req.session.userId,
       });
-
-      if (!todo) {
-        throw new UserInputError('Todo could not be found', {
-          field: 'todo',
-        });
-      }
-
-      if (todo.userId !== req.session.userId) {
-        throw new ForbiddenError('Forbidden');
-      }
 
       Object.assign(todo, { completedAt: null });
 
@@ -224,17 +197,10 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
-      const todo: Todo | undefined = await Todo.findOne({ where: { id } });
-
-      if (!todo) {
-        throw new UserInputError('Todo could not be found', {
-          field: 'todo',
-        });
-      }
-
-      if (todo.userId !== req.session.userId) {
-        throw new ForbiddenError('Forbidden');
-      }
+      const todo: Todo = await findTodoByIdForUserSession({
+        id,
+        userId: req.session.userId,
+      });
 
       Object.assign(todo, data);
 
