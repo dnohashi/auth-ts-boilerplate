@@ -9,11 +9,11 @@ import {
   Resolver,
 } from 'type-graphql';
 import { Todo } from '../entity/Todo';
-import { UserType } from '../entity/User';
 import { ContextType } from '../types';
 import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
 import { findTodoByIdForUserSession } from '../helpers/findTodoByIdForUserSession';
+import { AUTHORIZED_USER_TYPES } from '../constants/todos';
 
 @ObjectType()
 export class TodoResponse {
@@ -34,7 +34,7 @@ export class TodoResponse {
 export class TodoResolver {
   // Fetches todos for user
   @Query(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
     try {
       const todos: Todo[] = await Todo.find({
@@ -64,7 +64,7 @@ export class TodoResolver {
 
   // Creates new record based on request data
   @Mutation(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async createTodo(
     @Arg('data') data: TodoProps,
     @Ctx() { req }: ContextType,
@@ -94,7 +94,7 @@ export class TodoResolver {
 
   // Sets deletedAt
   @Mutation(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async deleteTodo(
     @Arg('id') id: string,
     @Ctx() { req }: ContextType,
@@ -126,7 +126,7 @@ export class TodoResolver {
 
   // Sets completedAt
   @Mutation(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async completeTodo(
     @Arg('id') id: string,
     @Ctx() { req }: ContextType,
@@ -158,7 +158,7 @@ export class TodoResolver {
 
   // Nullifies completedAt
   @Mutation(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async resetTodo(
     @Arg('id') id: string,
     @Ctx() { req }: ContextType,
@@ -190,7 +190,7 @@ export class TodoResolver {
 
   // Updates Todo by id and request data
   @Mutation(() => TodoResponse)
-  @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
+  @Authorized(AUTHORIZED_USER_TYPES)
   async updateTodo(
     @Arg('id') id: string,
     @Arg('data') data: TodoProps,
