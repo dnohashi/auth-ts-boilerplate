@@ -32,6 +32,7 @@ export class TodoResponse {
 
 @Resolver(Todo)
 export class TodoResolver {
+  // Fetches todos for user
   @Query(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
@@ -61,6 +62,7 @@ export class TodoResolver {
     }
   }
 
+  // Creates new record based on request data
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async createTodo(
@@ -90,6 +92,7 @@ export class TodoResolver {
     }
   }
 
+  // Sets deletedAt
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async deleteTodo(
@@ -130,6 +133,7 @@ export class TodoResolver {
     }
   }
 
+  // Sets completedAt
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async completeTodo(
@@ -170,6 +174,7 @@ export class TodoResolver {
     }
   }
 
+  // Nullifies completedAt
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async resetTodo(
@@ -210,6 +215,7 @@ export class TodoResolver {
     }
   }
 
+  // Updates Todo by id and request data
   @Mutation(() => TodoResponse)
   @Authorized([UserType.ADMIN_USER, UserType.BETA_USER, UserType.NORMAL_USER])
   async updateTodo(

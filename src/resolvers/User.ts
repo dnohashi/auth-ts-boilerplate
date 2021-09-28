@@ -20,9 +20,6 @@ import {
 } from '../inputs/UserInput';
 import { FormError } from '../types/FormError';
 
-// Object type for UserResponse
-// Defines fields that can be queried
-// Annotation is required to determine return types for resolvers
 @ObjectType()
 export class UserResponse {
   @Field(() => [FormError], { nullable: true })
@@ -35,10 +32,9 @@ export class UserResponse {
   message?: string;
 }
 
-// Controller
-// Resolves for type 'User' - the User entity is wrapped by @ObjectType
 @Resolver(User)
 export class UserResolver {
+  // Returns current user
   @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: ContextType): Promise<UserResponse> {
     try {
@@ -70,6 +66,7 @@ export class UserResolver {
     }
   }
 
+  // Return user specified by id
   @Query(() => UserResponse, { nullable: true })
   @Authorized([UserType.ADMIN_USER])
   async getUser(@Arg('params') { id }: UserGetInput): Promise<UserResponse> {
@@ -91,6 +88,7 @@ export class UserResolver {
     }
   }
 
+  // Creates user record
   @Mutation(() => UserResponse)
   async signup(
     @Arg('params')
@@ -156,6 +154,7 @@ export class UserResolver {
     }
   }
 
+  // Creates user session
   @Mutation(() => UserResponse)
   async signin(
     @Arg('params')
@@ -205,6 +204,7 @@ export class UserResolver {
     }
   }
 
+  // Removes user session
   @Mutation(() => UserResponse)
   async logout(@Ctx() { req, res }: ContextType): Promise<UserResponse> {
     return new Promise((resolve) =>
