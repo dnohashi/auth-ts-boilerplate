@@ -58,7 +58,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
@@ -88,7 +88,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
@@ -116,7 +116,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
@@ -144,7 +144,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
@@ -172,7 +172,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
@@ -201,7 +201,7 @@ export class TodoResolver {
         errors: [
           {
             field: 'exception',
-            message: error.message,
+            message: error instanceof Error ? error.message : undefined,
           },
         ],
       };
