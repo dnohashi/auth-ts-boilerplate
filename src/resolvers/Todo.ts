@@ -38,7 +38,11 @@ export class TodoResolver {
   // Fetches todos for user
   @Query(() => TodoResponse)
   @Authorized(AUTHORIZED_USER_TYPES)
-  async todos(@Ctx() { req }: ContextType): Promise<TodoResponse> {
+  async todos(
+    @Arg('limit') limit: number,
+    @Arg('offset') offset: number,
+    @Ctx() { req }: ContextType,
+  ): Promise<TodoResponse> {
     try {
       const todos: Todo[] = await Todo.find({
         where: {
@@ -48,6 +52,8 @@ export class TodoResolver {
         order: {
           createdAt: 'DESC',
         },
+        take: limit,
+        skip: offset,
       });
 
       return {
