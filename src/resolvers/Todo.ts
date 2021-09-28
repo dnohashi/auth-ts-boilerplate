@@ -13,7 +13,7 @@ import { UserType } from '../entity/User';
 import { ContextType } from '../types';
 import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
-import { findTodoByIdForUserSession } from './utils/findTodoByIdForUserSession';
+import { findTodoByIdForUserSession } from '../helpers/findTodoByIdForUserSession';
 
 @ObjectType()
 export class TodoResponse {

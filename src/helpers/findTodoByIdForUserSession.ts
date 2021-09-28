@@ -1,5 +1,5 @@
 import { ForbiddenError, UserInputError } from 'apollo-server';
-import { Todo } from '../../entity/Todo';
+import { Todo } from '../entity/Todo';
 
 interface IFindTodoByIdForUserSessionProps {
   id: string;
