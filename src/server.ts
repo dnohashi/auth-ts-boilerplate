@@ -25,7 +25,7 @@ import {
   GraphQLRequestContext,
   GraphQLRequestListener,
 } from 'apollo-server-plugin-base';
-import { AuthenticationChecker } from './helpers/AuthenticationChecker';
+import { AuthenticationChecker } from './helpers/auth/AuthenticationChecker';
 /**
  * Load env variables
  */

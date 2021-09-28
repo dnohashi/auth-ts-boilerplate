@@ -1,6 +1,6 @@
-import { ContextType } from '../types';
+import { ContextType } from '../../types';
 import { AuthChecker } from 'type-graphql';
-import { User } from '../entity/User';
+import { User } from '../../entity/User';
 
 export const AuthenticationChecker: AuthChecker<ContextType> = async (
   { context },

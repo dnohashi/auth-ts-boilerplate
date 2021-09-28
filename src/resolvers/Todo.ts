@@ -12,7 +12,10 @@ import { Todo } from '../entity/Todo';
 import { ContextType } from '../types';
 import { TodoProps } from '../inputs/TodoInput';
 import { FormError } from '../types/FormError';
-import { findTodoByIdForUserSession } from '../helpers/findTodoByIdForUserSession';
+import {
+  findTodoByIdForUserSession,
+  updateTodoWithProperties,
+} from '../helpers/todos';
 import { AUTHORIZED_USER_TYPES } from '../constants/todos';
 
 @ObjectType()
@@ -105,12 +108,8 @@ export class TodoResolver {
         userId: req.session.userId,
       });
 
-      Object.assign(todo, { deletedAt: new Date() });
-
-      await todo.save();
-
       return {
-        todo,
+        todo: await updateTodoWithProperties(todo, { deletedAt: new Date() }),
       };
     } catch (error) {
       return {
@@ -137,12 +136,8 @@ export class TodoResolver {
         userId: req.session.userId,
       });
 
-      Object.assign(todo, { completedAt: new Date() });
-
-      await todo.save();
-
       return {
-        todo,
+        todo: await updateTodoWithProperties(todo, { completedAt: new Date() }),
       };
     } catch (error) {
       return {
@@ -169,12 +164,8 @@ export class TodoResolver {
         userId: req.session.userId,
       });
 
-      Object.assign(todo, { completedAt: null });
-
-      await todo.save();
-
       return {
-        todo,
+        todo: await updateTodoWithProperties(todo, { completedAt: undefined }),
       };
     } catch (error) {
       return {
@@ -202,12 +193,8 @@ export class TodoResolver {
         userId: req.session.userId,
       });
 
-      Object.assign(todo, data);
-
-      await todo.save();
-
       return {
-        todo,
+        todo: await updateTodoWithProperties(todo, data),
       };
     } catch (error) {
       return {
