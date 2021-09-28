@@ -41,6 +41,9 @@ export class TodoResolver {
           userId: req.session.userId,
           deletedAt: null,
         },
+        order: {
+          createdAt: 'DESC',
+        },
       });
 
       return {
