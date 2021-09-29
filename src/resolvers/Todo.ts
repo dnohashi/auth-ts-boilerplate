@@ -61,7 +61,7 @@ export class TodoResolver {
         skip: offset,
       });
 
-      const count = await Todo.count({ userId });
+      const count = await Todo.count({ where: { userId, deletedAt: null } });
 
       return {
         todos,
