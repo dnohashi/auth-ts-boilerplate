@@ -29,6 +29,9 @@ export class TodoResponse {
   @Field(() => Todo, { nullable: true })
   todo?: Todo;
 
+  @Field(() => Number, { nullable: true })
+  count?: number;
+
   @Field(() => String, { nullable: true })
   message?: string;
 }
@@ -44,9 +47,11 @@ export class TodoResolver {
     @Ctx() { req }: ContextType,
   ): Promise<TodoResponse> {
     try {
+      const userId = req.session.userId;
+
       const todos: Todo[] = await Todo.find({
         where: {
-          userId: req.session.userId,
+          userId,
           deletedAt: null,
         },
         order: {
@@ -56,8 +61,11 @@ export class TodoResolver {
         skip: offset,
       });
 
+      const count = await Todo.count({ userId });
+
       return {
         todos,
+        count,
       };
     } catch (error) {
       return {
